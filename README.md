@@ -1,9 +1,9 @@
-Uses colorama [Fore, Back, Style] to highlight wrongly, half-rightly and rightly guessed letters.
-A word from a list of 26 words is randomly chosen.
-The user has 6 attempts to guess the five letter word.
-If the user enters a word with len(word) < 5, he is prompted to retry without losing on attempts.
-If the user enters a word with len(word) > 5, the word is sliced to get the word created using the first 5 letters.
-Meaningless words or words outside the corpus are valid inputs.
-If the user types exit or cls as the guess, they exit the program.
-If the user fails, the word is revealed to them.
-If the user succeeds, a congratulatory message "You won!" is displayed on the terminal.
+- Uses colorama [Fore, Back, Style] to highlight wrongly, half-rightly and rightly guessed letters.
+- A word from a list of 26 words is randomly chosen.
+- The user has 6 attempts to guess the five letter word.
+- If the user enters a word with len(word) < 5, he is prompted to retry without losing on attempts.
+- If the user enters a word with len(word) > 5, the word is sliced to get the word created using the first 5 letters.
+- Meaningless words or words outside the corpus are valid inputs.
+- If the user types exit or cls as the guess, they exit the program.
+- If the user fails, the word is revealed to them.
+- If the user succeeds, a congratulatory message "You won!" is displayed on the terminal.
