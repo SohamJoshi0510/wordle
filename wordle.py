@@ -32,10 +32,13 @@ color_map = [None for i in range(26)]
 import random
 
 def print_alphabet():
-    from colorama import Style, Fore
+    from colorama import Style, Fore, Back
     for color, alph in zip(color_map, alphabet):
         if color:
-            print(color + Fore.RED + " " + alph, end=" ")
+            if color != Back.LIGHTBLACK_EX:
+                print(color + Fore.RED + " " + alph, end=" ")
+            else:
+                print(color + " " + alph, end=" ")
         else:
             print(alph, end=" ")
         print(Style.RESET_ALL, end=" ")
@@ -59,13 +62,14 @@ def guess(struct, word):
     attempt = 0
     MAX_ATTEMPTS = 6
     while attempt < MAX_ATTEMPTS:
+        if guessed:
+            print()
+            break
+        
         print(Style.RESET_ALL)
         print_alphabet()
         print()
 
-        if guessed:
-            print("You won!")
-            return
         guess = input(f"[ATTEMPT {attempt + 1}/{MAX_ATTEMPTS}]\nGuess the word: ").lower()
         if guess == "exit" or guess == "cls":
             break
@@ -93,7 +97,10 @@ def guess(struct, word):
         attempt += 1
     
     print(Style.RESET_ALL)
-    print(f"The word was {word}.")
+    if guessed:
+        print("You won!")
+    else:
+        print(f"The word was {word}.")
 
 word = choose_word()
 # word = "eagle"
@@ -101,4 +108,3 @@ word = choose_word()
 struct = converter(word)
 # print(struct)
 guess(struct, word)
-        
