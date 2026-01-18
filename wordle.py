@@ -1,30 +1,31 @@
-word_list = [
-    "apple",
-    "beach",
-    "brain",
-    "cloud",
-    "dance",
-    "eagle",
-    "flame",
-    "glass",
-    "house",
-    "index",
-    "juice",
-    "light",
-    "money",
-    "night",
-    "ocean",
-    "party",
-    "quiet",
-    "river",
-    "smile",
-    "table",
-    "under",
-    "voice",
-    "water",
-    "young",
-    "zebra"
-]
+from get_5_letter_words import word_list
+# word_list = [
+#     "apple",
+#     "beach",
+#     "brain",
+#     "cloud",
+#     "dance",
+#     "eagle",
+#     "flame",
+#     "glass",
+#     "house",
+#     "index",
+#     "juice",
+#     "light",
+#     "money",
+#     "night",
+#     "ocean",
+#     "party",
+#     "quiet",
+#     "river",
+#     "smile",
+#     "table",
+#     "under",
+#     "voice",
+#     "water",
+#     "young",
+#     "zebra"
+# ]
 
 alphabet = [chr(ord('a') + i) for i in range(26)]
 color_map = [None for i in range(26)]
@@ -63,9 +64,9 @@ def guess(struct, word):
     MAX_ATTEMPTS = 6
     while attempt < MAX_ATTEMPTS:
         if guessed:
-            print()
+            print(Style.RESET_ALL)
             break
-        
+
         print(Style.RESET_ALL)
         print_alphabet()
         print()
@@ -76,6 +77,10 @@ def guess(struct, word):
                 
         if len(guess) < 5:
             print("The word is 5 letters long!")
+            continue
+
+        if not guess in word_list:
+            print("The guess does not exist in the corpus!")
             continue
         guess = guess[:5]
         guessed = True
@@ -108,3 +113,4 @@ word = choose_word()
 struct = converter(word)
 # print(struct)
 guess(struct, word)
+        
