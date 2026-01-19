@@ -1,4 +1,5 @@
 from get_5_letter_words import word_list
+from marker import color_mapper
 # word_list = [
 #     "apple",
 #     "beach",
@@ -28,13 +29,13 @@ from get_5_letter_words import word_list
 # ]
 
 alphabet = [chr(ord('a') + i) for i in range(26)]
-color_map = [None for i in range(26)]
+color_map_alphabet = [None for i in range(26)]
 
 import random
 
 def print_alphabet():
     from colorama import Style, Fore, Back
-    for color, alph in zip(color_map, alphabet):
+    for color, alph in zip(color_map_alphabet, alphabet):
         if color:
             if color != Back.LIGHTBLACK_EX:
                 print(color + Fore.RED + " " + alph, end=" ")
@@ -84,21 +85,23 @@ def guess(struct, word):
             continue
         guess = guess[:5]
         guessed = True
+
+        color_map_guess = color_mapper(word, guess)
+
         for i, letter in enumerate(guess):
             if letter in struct:
+                print(Fore.RED + color_map_guess[i] + " " + guess[i], end=" ")
                 if i in struct[letter]:
-                    print(Back.GREEN + Fore.RED + " " + letter, end=" ")
-                    color_map[ord(letter) - ord('a')] = Back.GREEN
+                    color_map_alphabet[ord(letter) - ord('a')] = Back.GREEN
                 else:
                     guessed = False
-                    print(Back.YELLOW + Fore.RED + " " + letter, end=" ")
-                    if color_map[ord(letter) - ord('a')] != Back.GREEN:
-                        color_map[ord(letter) - ord('a')] = Back.YELLOW
+                    if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN:
+                        color_map_alphabet[ord(letter) - ord('a')] = Back.YELLOW
             else:
                 guessed = False
-                print(Back.LIGHTBLACK_EX + Fore.WHITE + " " + letter, end=" ")
-                if color_map[ord(letter) - ord('a')] != Back.GREEN or color_map[ord(letter) - ord('a')] != Back.YELLOW:
-                    color_map[ord(letter) - ord('a')] = Back.LIGHTBLACK_EX
+                print(color_map_guess[i] + " " + guess[i], end=" ")
+                if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN or color_map_alphabet[ord(letter) - ord('a')] != Back.YELLOW:
+                    color_map_alphabet[ord(letter) - ord('a')] = Back.LIGHTBLACK_EX
         attempt += 1
     
     print(Style.RESET_ALL)
@@ -108,7 +111,7 @@ def guess(struct, word):
         print(f"The word was {word}.")
 
 word = choose_word()
-# word = "eagle"
+# word = "pupil"
 # print(word)
 struct = converter(word)
 # print(struct)
