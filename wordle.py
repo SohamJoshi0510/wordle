@@ -59,8 +59,6 @@ def converter(word):
     
 def guess(struct, word):
     from colorama import Back, Fore, Style
-    # print(Style.RESET_ALL)
-    guessed = False
     count = 0
     attempt = 0
     MAX_ATTEMPTS = 6
@@ -90,7 +88,6 @@ def guess(struct, word):
             continue
         guess = guess[:5]
         guesses.append(guess)
-        guessed = True
 
         color_map_guess = color_mapper(word, guess)
         color_maps.append(color_map_guess)
@@ -106,11 +103,9 @@ def guess(struct, word):
                         color_map_alphabet[ord(letter) - ord('a')] = Back.GREEN
                         count += 1
                     else:
-                        guessed = False
                         if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN:
                             color_map_alphabet[ord(letter) - ord('a')] = Back.YELLOW
                 else:
-                    guessed = False
                     print(color_map_guess[i] + " " + guess[i], end=" ")
                     print(Style.RESET_ALL, end="")
                     if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN or color_map_alphabet[ord(letter) - ord('a')] != Back.YELLOW:
@@ -125,7 +120,7 @@ def guess(struct, word):
         print(f"The word was {word}.")
 
 word = choose_word()
-word = "pupil"
+# word = "pupil"
 # print(word)
 struct = converter(word)
 # print(struct)
