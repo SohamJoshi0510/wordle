@@ -1,32 +1,32 @@
 from get_5_letter_words import word_list
 from marker import color_mapper
-# word_list = [
-#     "apple",
-#     "beach",
-#     "brain",
-#     "cloud",
-#     "dance",
-#     "eagle",
-#     "flame",
-#     "glass",
-#     "house",
-#     "index",
-#     "juice",
-#     "light",
-#     "money",
-#     "night",
-#     "ocean",
-#     "party",
-#     "quiet",
-#     "river",
-#     "smile",
-#     "table",
-#     "under",
-#     "voice",
-#     "water",
-#     "young",
-#     "zebra"
-# ]
+word_list_26 = [
+    "apple",
+    "beach",
+    "brain",
+    "cloud",
+    "dance",
+    "eagle",
+    "flame",
+    "glass",
+    "house",
+    "index",
+    "juice",
+    "light",
+    "money",
+    "night",
+    "ocean",
+    "party",
+    "quiet",
+    "river",
+    "smile",
+    "table",
+    "under",
+    "voice",
+    "water",
+    "young",
+    "zebra"
+]
 
 alphabet = [chr(ord('a') + i) for i in range(26)]
 color_map_alphabet = [None for i in range(26)]
@@ -47,7 +47,7 @@ def print_alphabet():
     print()
 
 def choose_word():
-    return random.choice(word_list)
+    return random.choice(word_list_26)
     
 def converter(word):
     letters = set(word)
@@ -61,14 +61,19 @@ def guess(struct, word):
     from colorama import Back, Fore, Style
     # print(Style.RESET_ALL)
     guessed = False
+    count = 0
     attempt = 0
     MAX_ATTEMPTS = 6
+    color_maps = []
+    guesses = []
+
     while attempt < MAX_ATTEMPTS:
-        if guessed:
+        if count == 5:
             print(Style.RESET_ALL)
             break
 
         print(Style.RESET_ALL)
+        print()
         print_alphabet()
         print()
 
@@ -84,34 +89,43 @@ def guess(struct, word):
             print("The guess does not exist in the corpus!")
             continue
         guess = guess[:5]
+        guesses.append(guess)
         guessed = True
 
         color_map_guess = color_mapper(word, guess)
+        color_maps.append(color_map_guess)
 
-        for i, letter in enumerate(guess):
-            if letter in struct:
-                print(Fore.RED + color_map_guess[i] + " " + guess[i], end=" ")
-                if i in struct[letter]:
-                    color_map_alphabet[ord(letter) - ord('a')] = Back.GREEN
+        for color_map_guess, guess in zip(color_maps, guesses):
+            print()
+            count = 0
+            for i, letter in enumerate(guess):
+                if letter in struct:
+                    print(Fore.RED + color_map_guess[i] + " " + guess[i], end=" ")
+                    print(Style.RESET_ALL, end="")
+                    if i in struct[letter]:
+                        color_map_alphabet[ord(letter) - ord('a')] = Back.GREEN
+                        count += 1
+                    else:
+                        guessed = False
+                        if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN:
+                            color_map_alphabet[ord(letter) - ord('a')] = Back.YELLOW
                 else:
                     guessed = False
-                    if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN:
-                        color_map_alphabet[ord(letter) - ord('a')] = Back.YELLOW
-            else:
-                guessed = False
-                print(color_map_guess[i] + " " + guess[i], end=" ")
-                if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN or color_map_alphabet[ord(letter) - ord('a')] != Back.YELLOW:
-                    color_map_alphabet[ord(letter) - ord('a')] = Back.LIGHTBLACK_EX
+                    print(color_map_guess[i] + " " + guess[i], end=" ")
+                    print(Style.RESET_ALL, end="")
+                    if color_map_alphabet[ord(letter) - ord('a')] != Back.GREEN or color_map_alphabet[ord(letter) - ord('a')] != Back.YELLOW:
+                        color_map_alphabet[ord(letter) - ord('a')] = Back.LIGHTBLACK_EX
+
         attempt += 1
     
     print(Style.RESET_ALL)
-    if guessed:
+    if count == 5:
         print("You won!")
     else:
         print(f"The word was {word}.")
 
 word = choose_word()
-# word = "pupil"
+word = "pupil"
 # print(word)
 struct = converter(word)
 # print(struct)
