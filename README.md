@@ -1,3 +1,4 @@
+- Has a Tkinter GUI version after the commit "Create a Tkinter GUI version using Claude".
 - Uses colorama [Fore, Back, Style] to highlight wrongly, half-rightly and rightly guessed letters.
 - A word from a list of 26 words is randomly chosen.
 - The user has 6 attempts to guess the five letter word.
