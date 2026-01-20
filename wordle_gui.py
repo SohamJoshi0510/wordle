@@ -118,7 +118,43 @@ class WordleGUI:
         new_game_btn.pack(pady=5)
         
         self.entry.focus()
-    
+
+    def animate_tile_reveal(self, box, letter, start_color, end_color, delay):
+        """Smooth color fade + soft pop animation"""
+
+        def hex_to_rgb(h):
+            return tuple(int(h[i:i+2], 16) for i in (1, 3, 5))
+
+        def rgb_to_hex(rgb):
+            return '#%02x%02x%02x' % rgb
+
+        start_rgb = hex_to_rgb(start_color)
+        end_rgb = hex_to_rgb(end_color)
+
+        steps = 8
+
+        def animate(step=0):
+            if step > steps:
+                box.config(relief='solid', borderwidth=2)
+                return
+
+            interp = tuple(
+                int(start_rgb[i] + (end_rgb[i] - start_rgb[i]) * step / steps)
+                for i in range(3)
+            )
+
+            box.config(
+                text=letter.upper(),
+                bg=rgb_to_hex(interp),
+                fg='white',
+                borderwidth=1 if step < steps else 2
+            )
+
+            self.root.after(25, animate, step + 1)
+
+        self.root.after(delay, animate)
+
+
     def submit_guess(self):
         if self.attempt >= self.MAX_ATTEMPTS:
             return
@@ -138,23 +174,33 @@ class WordleGUI:
         # Get color mapping
         colors = color_mapper(self.word, guess)
         
-        # Update the board
+        self.entry.config(state='disabled')
+
         for i, (letter, color) in enumerate(zip(guess, colors)):
             box = self.letter_boxes[self.attempt][i]
-            box.config(text=letter.upper())
-            
+
             if color == 'green':
-                box.config(bg='#538d4e')
+                target = '#538d4e'
                 self.color_map_alphabet[letter] = '#538d4e'
             elif color == 'yellow':
-                box.config(bg='#b59f3b')
-                if letter not in self.color_map_alphabet or self.color_map_alphabet[letter] != '#538d4e':
+                target = '#b59f3b'
+                if self.color_map_alphabet.get(letter) != '#538d4e':
                     self.color_map_alphabet[letter] = '#b59f3b'
             else:
-                box.config(bg='#3a3a3c')
-                if letter not in self.color_map_alphabet:
-                    self.color_map_alphabet[letter] = '#3a3a3c'
-        
+                target = '#3a3a3c'
+                self.color_map_alphabet.setdefault(letter, '#3a3a3c')
+
+            self.animate_tile_reveal(
+                box=box,
+                letter=letter,
+                start_color='#3a3a3c',
+                end_color=target,
+                delay=i * 200
+            )
+
+        # re-enable input after animation
+        self.root.after(5 * 200 + 250, lambda: self.entry.config(state='normal'))
+
         # Update alphabet display
         for letter, color in self.color_map_alphabet.items():
             self.alphabet_labels[letter].config(bg=color)
