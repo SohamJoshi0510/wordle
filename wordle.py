@@ -47,7 +47,21 @@ def print_alphabet():
     print()
 
 def choose_word():
-    return random.choice(word_list_26)
+    MODE = input(
+        """
+Type 'r' to randomly select a word
+Type 's' to type in a word for your peers to guess: """)
+    
+    match MODE:
+        case 's':
+            import getpass
+            WORD = getpass.getpass("Enter a word: ")
+            if WORD in word_list:
+                return WORD
+            print("Chosen word is not a valid word. Choosing a random word...")
+            return random.choice(word_list_26)
+        case 'r':
+            return random.choice(word_list_26)
     
 def converter(word):
     letters = set(word)
@@ -122,7 +136,8 @@ def guess(struct, word):
 word = choose_word()
 # word = "pupil"
 # print(word)
-struct = converter(word)
-# print(struct)
-guess(struct, word)
+if word:
+    struct = converter(word)
+    # print(struct)
+    guess(struct, word)
         

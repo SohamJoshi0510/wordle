@@ -9,6 +9,23 @@ word_list_26 = [
     "quiet", "river", "smile", "table", "under", "voice", "water", "young", "zebra"
 ]
 
+def get_mode(mode):
+    match mode:
+        case 'r':
+            return random.choice(word_list_26)
+        
+        case 's':
+            import getpass
+            WORD_TO_GUESS = getpass.getpass("Enter word: ")
+            if WORD_TO_GUESS in word_list:
+                return WORD_TO_GUESS
+            else:
+                print("Chosen word is not a valid word. Choosing a random word...")
+                return random.choice(word_list_26)
+        
+        case _:
+            return
+
 def color_mapper(word, guess):
     """Returns a list of colors for each letter in the guess"""
     colors = ['gray'] * 5
@@ -37,7 +54,7 @@ class WordleGUI:
         
         self.MAX_ATTEMPTS = 6
         self.attempt = 0
-        self.word = random.choice(word_list_26)
+        self.word = get_mode(MODE)
         self.struct = self.converter(self.word)
         
         # Alphabet state tracking
@@ -242,6 +259,12 @@ class WordleGUI:
         self.entry.focus()
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = WordleGUI(root)
-    root.mainloop()
+    MODE = input(
+        """
+Type 'r' to randomly select a word
+Type 's' to type in a word for your peers to guess: """)
+    
+    if MODE in ['r', 's']:
+        root = tk.Tk()
+        app = WordleGUI(root)
+        root.mainloop()
