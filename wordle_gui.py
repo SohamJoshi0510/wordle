@@ -9,23 +9,6 @@ word_list_26 = [
     "quiet", "river", "smile", "table", "under", "voice", "water", "young", "zebra"
 ]
 
-def get_mode(mode):
-    match mode:
-        case 'r':
-            return random.choice(word_list_26)
-        
-        case 's':
-            import getpass
-            WORD_TO_GUESS = getpass.getpass("Enter word: ")
-            if WORD_TO_GUESS in word_list:
-                return WORD_TO_GUESS
-            else:
-                print("Chosen word is not a valid word. Choosing a random word...")
-                return random.choice(word_list_26)
-        
-        case _:
-            return
-
 def color_mapper(word, guess):
     """Returns a list of colors for each letter in the guess"""
     colors = ['gray'] * 5
@@ -54,8 +37,15 @@ class WordleGUI:
         
         self.MAX_ATTEMPTS = 6
         self.attempt = 0
-        self.word = get_mode(MODE)
-        self.struct = self.converter(self.word)
+        self.word = None
+        self.struct = None
+
+        if MODE == 'r':
+            self.word = random.choice(word_list_26)
+            self.struct = self.converter(self.word)
+        elif MODE == 's':
+            self.ask_secret_word()
+
         
         # Alphabet state tracking
         self.alphabet = [chr(ord('a') + i) for i in range(26)]
@@ -171,6 +161,53 @@ class WordleGUI:
 
         self.root.after(delay, animate)
 
+    def ask_secret_word(self):
+        popup = tk.Toplevel(self.root)
+        popup.title("Enter Secret Word")
+        popup.geometry("300x150")
+        popup.configure(bg="#121213")
+        popup.grab_set()  # modal
+
+        tk.Label(
+            popup,
+            text="Enter secret word",
+            font=("Arial", 14),
+            bg="#121213",
+            fg="white"
+        ).pack(pady=10)
+
+        entry = tk.Entry(
+            popup,
+            font=("Arial", 16),
+            justify="center",
+            show="*"
+        )
+        entry.pack(pady=5)
+        entry.focus()
+
+        def submit():
+            word = entry.get().lower().strip()
+            if len(word) != 5 or word not in word_list:
+                messagebox.showwarning(
+                    "Invalid",
+                    "Word must be a valid 5-letter dictionary word",
+                    parent=popup
+                )
+                return
+
+            self.word = word
+            self.struct = self.converter(self.word)
+            popup.destroy()
+
+        tk.Button(
+            popup,
+            text="Confirm",
+            command=submit,
+            bg="#538d4e",
+            fg="white",
+            font=("Arial", 12),
+            padx=10
+        ).pack(pady=10)
 
     def submit_guess(self):
         if self.attempt >= self.MAX_ATTEMPTS:
@@ -259,11 +296,14 @@ class WordleGUI:
         self.entry.focus()
 
 if __name__ == "__main__":
-    MODE = input(
-        """
-Type 'r' to randomly select a word
-Type 's' to type in a word for your peers to guess: """)
-    
+
+    MODE = messagebox.askquestion(
+    "Game Mode",
+    "Click 'Yes' for RANDOM word\nClick 'No' to ENTER a secret word"
+    )
+
+    MODE = 'r' if MODE == 'yes' else 's'
+
     if MODE in ['r', 's']:
         root = tk.Tk()
         app = WordleGUI(root)
